@@ -1,0 +1,6 @@
+phpunit.xml
+Tests/autoload.php
+Coverage
+
+vendor/*
+!vendor/vendors.php
