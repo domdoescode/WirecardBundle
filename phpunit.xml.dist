@@ -3,7 +3,7 @@
 <phpunit bootstrap="./Tests/bootstrap.php" color="true">
 
     <testsuites>
-        <testsuite name="SynthNotificationBunle test suite">
+        <testsuite name="DomUdallWirecardBundle Test Suite">
             <directory suffix="Test.php">./Tests</directory>
         </testsuite>
     </testsuites>
