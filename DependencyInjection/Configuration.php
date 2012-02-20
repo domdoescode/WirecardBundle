@@ -46,16 +46,6 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
-                ->arrayNode('qpay')
-                    ->isRequired()
-                    ->cannotBeEmpty()
-                    ->children()
-                        ->scalarNode('secret')
-                            ->isRequired()
-                            ->cannotBeEmpty()
-                            ->end()
-                        ->end()
-                    ->end()
                 ->arrayNode('from_email')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -71,10 +61,75 @@ class Configuration implements ConfigurationInterface
                     ->end()
             ->end();
 
+        $this->addQpaySection($rootNode);
         $this->addServiceSection($rootNode);
         $this->addTemplateSection($rootNode);
 
         return $treeBuilder;
+    }
+
+    /**
+     * Creates the QPAY section of the configuration file.
+     *
+     * @param ArrayNodeDefinition $node Root node of configuration tree builder
+     */
+    private function addQpaySection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('qpay')
+                    ->addDefaultsIfNotSet()
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                    ->children()
+                        ->scalarNode('secret')
+                            ->isRequired()
+                            ->cannotBeEmpty()
+                            ->end()
+                        ->scalarNode('customer_id')
+                            ->isRequired()
+                            ->cannotBeEmpty()
+                            ->end()
+                        ->scalarNode('currency')
+                            ->isRequired()
+                            ->cannotBeEmpty()
+                            ->end()
+                        ->arrayNode('url')
+                            ->addDefaultsIfNotSet()
+                            ->isRequired()
+                            ->cannotBeEmpty()
+                            ->children()
+                                ->scalarNode('qpay')
+                                    ->defaultValue('https://www.qenta.com/qpay/init.php')
+                                    ->cannotBeEmpty()
+                                    ->end()
+                                ->scalarNode('success')
+                                    ->isRequired()
+                                    ->cannotBeEmpty()
+                                    ->end()
+                                ->scalarNode('cancel')
+                                    ->isRequired()
+                                    ->cannotBeEmpty()
+                                    ->end()
+                                ->scalarNode('failure')
+                                    ->isRequired()
+                                    ->cannotBeEmpty()
+                                    ->end()
+                                ->scalarNode('service')
+                                    ->isRequired()
+                                    ->cannotBeEmpty()
+                                    ->end()
+                                ->scalarNode('image')
+                                    ->isRequired()
+                                    ->cannotBeEmpty()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 
     /**
@@ -90,11 +145,8 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('service')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('mailer')
-                            ->defaultValue('synth_notification.mailer.default')
-                            ->end()
-                        ->scalarNode('notification_manager')
-                            ->defaultValue('synth_notification.notification_manager.default')
+                        ->scalarNode('payment_manager')
+                            ->defaultValue('wirecard.payment_manager.default')
                             ->end()
                         ->end()
                     ->end()
@@ -102,6 +154,11 @@ class Configuration implements ConfigurationInterface
             ->end();
     }
 
+    /**
+     * Creates the template section of the configuration file.
+     *
+     * @param ArrayNodeDefinition $node Root node of configuration tree builder
+     */
     private function addTemplateSection(ArrayNodeDefinition $node)
     {
         $node

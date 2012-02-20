@@ -131,6 +131,132 @@ class DomUdallWirecardExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testLoadThrowsExceptionUnlessQpaySet()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        unset($config['qpay']);
+        $loader->load(array($config), new ContainerBuilder());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testLoadThrowsExceptionUnlessQpaySecretSet()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        unset($config['qpay']['secret']);
+        $loader->load(array($config), new ContainerBuilder());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testLoadThrowsExceptionUnlessQpayCustomerIdSet()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        unset($config['qpay']['customer_id']);
+        $loader->load(array($config), new ContainerBuilder());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testLoadThrowsExceptionUnlessQpayCurrencySet()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        unset($config['qpay']['currency']);
+        $loader->load(array($config), new ContainerBuilder());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testLoadThrowsExceptionUnlessQpayUrlsSet()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        unset($config['qpay']['url']);
+        $loader->load(array($config), new ContainerBuilder());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testLoadThrowsExceptionUnlessQpaySuccessUrlSet()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        unset($config['qpay']['url']['success']);
+        $loader->load(array($config), new ContainerBuilder());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testLoadThrowsExceptionUnlessQpayCancelUrlSet()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        unset($config['qpay']['url']['cancel']);
+        $loader->load(array($config), new ContainerBuilder());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testLoadThrowsExceptionUnlessQpayFailureUrlSet()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        unset($config['qpay']['url']['failure']);
+        $loader->load(array($config), new ContainerBuilder());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testLoadThrowsExceptionUnlessQpayServiceUrlSet()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        unset($config['qpay']['url']['service']);
+        $loader->load(array($config), new ContainerBuilder());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testLoadThrowsExceptionUnlessQpayImageUrlSet()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        unset($config['qpay']['url']['image']);
+        $loader->load(array($config), new ContainerBuilder());
+    }
+
+    public function testLoadServicesWithDefaults()
+    {
+        $this->createMinimalConfiguration();
+
+        $this->assertHasDefinition('wirecard.payment_manager');
+        $this->assertAlias('wirecard.payment_manager.default', 'wirecard.payment_manager');
+    }
+    
+    public function testLoadTemplatesWithDefaults()
+    {
+        $this->createMinimalConfiguration();
+
+        $this->assertParameter('twig', 'wirecard.template.engine');
+        $this->assertParameter('DomUdallWirecardBundle::form.html.twig', 'wirecard.template.theme');
+    }
+
+    /**
      * @return array
      */
     protected function getMinimumConfig()
@@ -143,10 +269,45 @@ payment:
   manager_class: DomUdall/WirecardBundle/Model/Manager.php
 qpay:
   secret: NOT_SO_SECRET
+  customer_id: D200001
+  currency: GBP
+  url:
+    success: http://moneybags.com/payment/success.php
+    cancel: http://moneybags.com/payment/cancel.php
+    failure: http://moneybags.com/payment/failure.php
+    service: http://moneybags.com/contact.php
+    image: http://moneybags.com/resource/image/logo.png
 EOF;
         $parser = new Parser();
 
         return $parser->parse($yaml);
+    }
+
+    /**
+     * @return ContainerBuilder
+     */
+    protected function createMinimalConfiguration()
+    {
+        $this->configuration = new ContainerBuilder();
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        $loader->load(array($config), $this->configuration);
+        $this->assertTrue($this->configuration instanceof ContainerBuilder);
+    }
+
+    protected function assertParameter($value, $key)
+    {
+        $this->assertEquals($value, $this->configuration->getParameter($key), sprintf('%s parameter is correct', $key));
+    }
+
+    protected function assertHasDefinition($id)
+    {
+        $this->assertTrue(($this->configuration->hasDefinition($id) ?: $this->configuration->hasAlias($id)));
+    }
+
+    protected function assertAlias($value, $key)
+    {
+        $this->assertEquals($value, (string) $this->configuration->getAlias($key), sprintf('%s alias is correct', $key));
     }
 
     protected function tearDown()
