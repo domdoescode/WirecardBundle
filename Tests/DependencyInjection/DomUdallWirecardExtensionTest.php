@@ -240,7 +240,34 @@ class DomUdallWirecardExtensionTest extends \PHPUnit_Framework_TestCase
         $loader->load(array($config), new ContainerBuilder());
     }
 
-    public function testLoadServicesWithDefaults()
+    public function testLoadGeneralWithMinimalConfig()
+    {
+        $this->createMinimalConfiguration();
+
+        $this->assertParameter('DomUdall/WirecardBundle/Entity/Request.php', 'wirecard.payment.request.class');
+        $this->assertParameter('DomUdall/WirecardBundle/Entity/Response.php', 'wirecard.payment.response.class');
+        $this->assertParameter('DomUdall/WirecardBundle/Model/Manager.php', 'wirecard.payment.manager.class');
+    }
+
+    public function testLoadQpayWithMinimalConfig()
+    {
+        $this->createMinimalConfiguration();
+
+        $this->assertParameter('NOT_SO_SECRET', 'wirecard.qpay.secret');
+        $this->assertParameter('D200001', 'wirecard.qpay.customer_id');
+        $this->assertParameter('GBP', 'wirecard.qpay.currency');
+        $this->assertParameter('en', 'wirecard.qpay.language');
+        $this->assertParameter(true, 'wirecard.qpay.duplicate_request_check');
+        $this->assertParameter(true, 'wirecard.qpay.auto_deposit');
+
+        $this->assertParameter('http://moneybags.com/payment/success.php', 'wirecard.qpay.url.success');
+        $this->assertParameter('http://moneybags.com/payment/cancel.php', 'wirecard.qpay.url.cancel');
+        $this->assertParameter('http://moneybags.com/payment/failure.php', 'wirecard.qpay.url.failure');
+        $this->assertParameter('http://moneybags.com/contact.php', 'wirecard.qpay.url.service');
+        $this->assertParameter('http://moneybags.com/resource/image/logo.png', 'wirecard.qpay.url.image');
+    }
+
+    public function testLoadServicesWithMinimalConfig()
     {
         $this->createMinimalConfiguration();
 
@@ -248,12 +275,55 @@ class DomUdallWirecardExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertAlias('wirecard.payment_manager.default', 'wirecard.payment_manager');
     }
     
-    public function testLoadTemplatesWithDefaults()
+    public function testLoadTemplatesWithMinimalConfig()
     {
         $this->createMinimalConfiguration();
 
         $this->assertParameter('twig', 'wirecard.template.engine');
         $this->assertParameter('DomUdallWirecardBundle::form.html.twig', 'wirecard.template.theme');
+    }
+
+    public function testLoadGeneralWithFullConfig()
+    {
+        $this->createMinimalConfiguration();
+
+        $this->assertParameter('DomUdall/WirecardBundle/Entity/Request.php', 'wirecard.payment.request.class');
+        $this->assertParameter('DomUdall/WirecardBundle/Entity/Response.php', 'wirecard.payment.response.class');
+        $this->assertParameter('DomUdall/WirecardBundle/Model/Manager.php', 'wirecard.payment.manager.class');
+    }
+
+    public function testLoadQpayWithFullConfig()
+    {
+        $this->createFullConfiguration();
+
+        $this->assertParameter('SUPER_SECRET_SIGNAL', 'wirecard.qpay.secret');
+        $this->assertParameter('D200002', 'wirecard.qpay.customer_id');
+        $this->assertParameter('EUR', 'wirecard.qpay.currency');
+        $this->assertParameter('de', 'wirecard.qpay.language');
+        $this->assertParameter(false, 'wirecard.qpay.duplicate_request_check');
+        $this->assertParameter(false, 'wirecard.qpay.auto_deposit');
+
+        $this->assertParameter('http://moneybags.com/paywall/success.php', 'wirecard.qpay.url.success');
+        $this->assertParameter('http://moneybags.com/paywall/cancel.php', 'wirecard.qpay.url.cancel');
+        $this->assertParameter('http://moneybags.com/paywall/failure.php', 'wirecard.qpay.url.failure');
+        $this->assertParameter('http://moneybags.com/contact/', 'wirecard.qpay.url.service');
+        $this->assertParameter('http://moneybags.com/image/logo.png', 'wirecard.qpay.url.image');
+    }
+
+    public function testLoadServicesWithFullConfig()
+    {
+        $this->createFullConfiguration();
+
+        $this->assertHasDefinition('wirecard.payment_manager');
+        $this->assertAlias('wirecard.payment_manager.custom', 'wirecard.payment_manager');
+    }
+    
+    public function testLoadTemplatesWithFullConfig()
+    {
+        $this->createFullConfiguration();
+
+        $this->assertParameter('php', 'wirecard.template.engine');
+        $this->assertParameter('AcmeBank::form.html.php', 'wirecard.template.theme');
     }
 
     /**
@@ -284,6 +354,41 @@ EOF;
     }
 
     /**
+     * @return array
+     */
+    protected function getFullConfig()
+    {
+        $yaml = <<<EOF
+db_driver: orm
+payment:
+  request_class: AcmeBank/WirecardBundle/Entity/Request.php
+  response_class: AcmeBank/WirecardBundle/Entity/Response.php
+  manager_class: AcmeBank/WirecardBundle/Model/Manager.php
+qpay:
+  secret: SUPER_SECRET_SIGNAL
+  customer_id: D200002
+  currency: EUR
+  language: de
+  duplicate_request_check: false
+  auto_deposit: false
+  url:
+    success: http://moneybags.com/paywall/success.php
+    cancel: http://moneybags.com/paywall/cancel.php
+    failure: http://moneybags.com/paywall/failure.php
+    service: http://moneybags.com/contact/
+    image: http://moneybags.com/image/logo.png
+service:
+    payment_manager: wirecard.payment_manager.custom
+template:
+  engine: php
+  theme: AcmeBank::form.html.php
+EOF;
+        $parser = new Parser();
+
+        return $parser->parse($yaml);
+    }
+
+    /**
      * @return ContainerBuilder
      */
     protected function createMinimalConfiguration()
@@ -291,6 +396,18 @@ EOF;
         $this->configuration = new ContainerBuilder();
         $loader = new DomUdallWirecardExtension();
         $config = $this->getMinimumConfig();
+        $loader->load(array($config), $this->configuration);
+        $this->assertTrue($this->configuration instanceof ContainerBuilder);
+    }
+
+    /**
+     * @return ContainerBuilder
+     */
+    protected function createFullConfiguration()
+    {
+        $this->configuration = new ContainerBuilder();
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getFullConfig();
         $loader->load(array($config), $this->configuration);
         $this->assertTrue($this->configuration instanceof ContainerBuilder);
     }

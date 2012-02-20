@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the Synth Notification Bundle.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author Dom Udall <dom@synthmedia.co.uk>
+ */
+
 namespace DomUdall\WirecardBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -94,6 +103,16 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('currency')
                             ->isRequired()
                             ->cannotBeEmpty()
+                            ->end()
+                        ->scalarNode('language')
+                            ->defaultValue('en')
+                            ->cannotBeEmpty()
+                            ->end()
+                        ->booleanNode('duplicate_request_check')
+                            ->defaultTrue()
+                            ->end()
+                        ->booleanNode('auto_deposit')
+                            ->defaultTrue()
                             ->end()
                         ->arrayNode('url')
                             ->addDefaultsIfNotSet()
