@@ -6,6 +6,8 @@ Builds are run using the awesome [Travis CI](http://travis-ci.org/), testing aga
 
 ## Installation
 
+### Update Deps
+
 Add the following lines to your ``deps`` file:
 
 ```
@@ -20,7 +22,7 @@ Update your vendors in the usual way:
 $ ./bin/vendors install
 ```
 
-## Configure Autoloader
+### Configure Autoloader
 
 Add the following to your autoloader:
 
@@ -61,6 +63,7 @@ public function registerBundles()
 
 At the moment, this bundle is being built for a single use case, however it would be great to extend it to include the following:
 
+* Reduce the min config! It's pretty mahoosive, don't know if this can be resolved though.
 * Multiple currencies (at present a single default is set in the configuration).
 * Custom fields via configuration (including validation based on if set to mandatory).
 * mongodb, couchdb and propel support.
