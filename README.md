@@ -57,6 +57,14 @@ public function registerBundles()
 
 *THIS NEEDS TO BE COMPLETED FIRST!*
 
+## To Do's
+
+At the moment, this bundle is being built for a single use case, however it would be great to extend it to include the following:
+
+* Multiple currencies (at present a single default is set in the configuration).
+* Custom fields via configuration (including validation based on if set to mandatory).
+* mongodb, couchdb and propel support.
+
 ## Credits
 
 [Dom Udall](https://github.com/domudall/)

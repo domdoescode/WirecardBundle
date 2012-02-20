@@ -1,0 +1,8 @@
+services:
+    wirecard.payment_manager.default:
+        class: %wirecard.payment.manager.class%
+        arguments:
+            - @service_container
+            - @doctrine.orm.entity_manager
+            - %wirecard.payment.request.class%
+            - %wirecard.payment.response.class%

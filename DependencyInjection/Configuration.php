@@ -18,12 +18,92 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('dom_udall_wirecard');
+        $rootNode = $treeBuilder->root('wirecard');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode
+            ->children()
+                ->scalarNode('db_driver')
+                    ->cannotBeOverwritten()
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                    ->end()
+                ->arrayNode('payment')
+                    ->scalarNode('request_class')
+                        ->isRequired()
+                        ->cannotBeEmpty()
+                        ->end()
+                    ->scalarNode('response_class')
+                        ->isRequired()
+                        ->cannotBeEmpty()
+                        ->end()
+                    ->scalarNode('manager_class')
+                        ->isRequired('wirecard.payment_manager.default')
+                        ->cannotBeEmpty()
+                        ->end()
+                    ->end()
+                ->arrayNode('qpay')
+                    ->scalarNode('secret')
+                        ->isRequired()
+                        ->cannotBeEmpty()
+                        ->end()
+                    ->end()
+                ->arrayNode('from_email')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('address')
+                            ->defaultValue('payments@moneybags.com')
+                            ->cannotBeEmpty()
+                            ->end()
+                        ->scalarNode('sender_name')
+                            ->defaultValue('payments')
+                            ->cannotBeEmpty()
+                            ->end()
+                        ->end()
+                    ->end()
+            ->end();
+
+        $this->addServiceSection($rootNode);
+        $this->addTemplateSection($rootNode);
 
         return $treeBuilder;
+    }
+
+    /**
+     * Creates the services section of the configuration file.
+     *
+     * @param ArrayNodeDefinition $node Root node of configuration tree builder
+     */
+    private function addServiceSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('service')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('mailer')
+                            ->defaultValue('synth_notification.mailer.default')
+                            ->end()
+                        ->scalarNode('notification_manager')
+                            ->defaultValue('synth_notification.notification_manager.default')
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    private function addTemplateSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
+                ->arrayNode('template')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('engine')->defaultValue('twig')->end()
+                        ->scalarNode('theme')->defaultValue('DomUdallWirecardBundle::form.html.twig')->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 }

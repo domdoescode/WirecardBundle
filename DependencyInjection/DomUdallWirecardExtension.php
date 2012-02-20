@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the Synth Notification Bundle.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author Dom Udall <dom@synthmedia.co.uk>
+ */
+
 namespace DomUdall\WirecardBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -23,6 +32,19 @@ class DomUdallWirecardExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+
+        if (in_array(strtolower($config['db']['driver']), array('mongodb', 'couchdb'))) {
+            throw new \InvalidArgumentException(
+                sprintf('Currently only the orm db driver is supported, %s support is en route.', $config['db']['driver'])
+            );
+        } elseif (!in_array(strtolower($config['db']['driver']), array('orm'))) {
+            throw new \InvalidArgumentException(sprintf('Invalid db driver "%s".', $config['db']['driver']));
+        }
+
+        $loader->load(sprintf('%s.yml', $config['db']['driver']));
+
+        $container->setParameter('wirecard.payment.request.class', $config['payment']['request_class']);
+        $container->setParameter('wirecard.payment.response.class', $config['payment']['response_class']);
+        $container->setParameter('wirecard.payment.manager.class', $config['payment']['manager_class']);
     }
 }
