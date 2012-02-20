@@ -33,15 +33,15 @@ class DomUdallWirecardExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-        if (in_array(strtolower($config['db']['driver']), array('mongodb', 'couchdb'))) {
+        if (in_array(strtolower($config['db_driver']), array('mongodb', 'couchdb', 'propel'))) {
             throw new \InvalidArgumentException(
-                sprintf('Currently only the orm db driver is supported, %s support is en route.', $config['db']['driver'])
+                sprintf('Currently only the orm db driver is supported, %s support is en route.', $config['db_driver'])
             );
-        } elseif (!in_array(strtolower($config['db']['driver']), array('orm'))) {
-            throw new \InvalidArgumentException(sprintf('Invalid db driver "%s".', $config['db']['driver']));
+        } elseif (!in_array(strtolower($config['db_driver']), array('orm'))) {
+            throw new \InvalidArgumentException(sprintf('Invalid db driver "%s".', $config['db_driver']));
         }
 
-        $loader->load(sprintf('%s.yml', $config['db']['driver']));
+        $loader->load(sprintf('%s.yml', $config['db_driver']));
 
         $container->setParameter('wirecard.payment.request.class', $config['payment']['request_class']);
         $container->setParameter('wirecard.payment.response.class', $config['payment']['response_class']);
