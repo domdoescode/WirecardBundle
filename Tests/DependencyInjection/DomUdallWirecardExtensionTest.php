@@ -25,10 +25,19 @@ class DomUdallWirecardExtensionTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      */
+    public function testLoadThrowsExceptionWithNoConfig()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $loader->load(array(), new ContainerBuilder());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
     public function testLoadThrowsExceptionUnlessDatabaseDriverSet()
     {
         $loader = new DomUdallWirecardExtension();
-        $config = $this->getEmptyConfig();
+        $config = $this->getMinimumConfig();
         unset($config['db_driver']);
         $loader->load(array($config), new ContainerBuilder());
     }
@@ -39,7 +48,7 @@ class DomUdallWirecardExtensionTest extends \PHPUnit_Framework_TestCase
     public function testLoadThrowsExceptionUnlessDatabaseDriverIsValid()
     {
         $loader = new DomUdallWirecardExtension();
-        $config = $this->getEmptyConfig();
+        $config = $this->getMinimumConfig();
         $config['db_driver'] = 'foo';
         $loader->load(array($config), new ContainerBuilder());
     }
@@ -50,7 +59,7 @@ class DomUdallWirecardExtensionTest extends \PHPUnit_Framework_TestCase
     public function testLoadThrowsExceptionMongoDBDriverIsInvalid()
     {
         $loader = new DomUdallWirecardExtension();
-        $config = $this->getEmptyConfig();
+        $config = $this->getMinimumConfig();
         $config['db_driver'] = 'mongodb';
         $loader->load(array($config), new ContainerBuilder());
     }
@@ -61,7 +70,7 @@ class DomUdallWirecardExtensionTest extends \PHPUnit_Framework_TestCase
     public function testLoadThrowsExceptionCouchDBDriverIsInvalid()
     {
         $loader = new DomUdallWirecardExtension();
-        $config = $this->getEmptyConfig();
+        $config = $this->getMinimumConfig();
         $config['db_driver'] = 'couchdb';
         $loader->load(array($config), new ContainerBuilder());
     }
@@ -72,18 +81,68 @@ class DomUdallWirecardExtensionTest extends \PHPUnit_Framework_TestCase
     public function testLoadThrowsExceptionPropelDriverIsInvalid()
     {
         $loader = new DomUdallWirecardExtension();
-        $config = $this->getEmptyConfig();
+        $config = $this->getMinimumConfig();
         $config['db_driver'] = 'propel';
+        $loader->load(array($config), new ContainerBuilder());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testLoadThrowsExceptionUnlessPaymentNodeSet()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        unset($config['payment']);
+        $loader->load(array($config), new ContainerBuilder());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testLoadThrowsExceptionUnlessPaymentRequestSet()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        unset($config['payment']['request_class']);
+        $loader->load(array($config), new ContainerBuilder());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testLoadThrowsExceptionUnlessPaymentResponseSet()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        unset($config['payment']['response_class']);
+        $loader->load(array($config), new ContainerBuilder());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testLoadThrowsExceptionUnlessManagerClassSet()
+    {
+        $loader = new DomUdallWirecardExtension();
+        $config = $this->getMinimumConfig();
+        unset($config['payment']['manager_class']);
         $loader->load(array($config), new ContainerBuilder());
     }
 
     /**
      * @return array
      */
-    protected function getEmptyConfig()
+    protected function getMinimumConfig()
     {
         $yaml = <<<EOF
 db_driver: orm
+payment:
+  request_class: DomUdall/WirecardBundle/Entity/Request.php
+  response_class: DomUdall/WirecardBundle/Entity/Response.php
+  manager_class: DomUdall/WirecardBundle/Model/Manager.php
+qpay:
+  secret: NOT_SO_SECRET
 EOF;
         $parser = new Parser();
 
