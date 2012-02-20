@@ -1,4 +1,4 @@
-# DomUdallWirecardBundle [![Build Status](https://secure.travis-ci.org/domudall/DomUdallWirecardBundle.png)](http://travis-ci.org/domudall/DomUdallWirecardBundle)
+# DomUdallWirecardBundle [![Build Status](https://secure.travis-ci.org/domudall/WirecardBundle.png)](http://travis-ci.org/domudall/WirecardBundle)
 
 This bundle uses version 1.0.8 of the Wirecard QPAY API to allow your Symfony2 project to take single and repeated payments.
 
