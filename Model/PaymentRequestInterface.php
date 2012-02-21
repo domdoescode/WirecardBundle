@@ -21,8 +21,23 @@ interface PaymentRequestInterface
 
     function getAmount();
 
+    function setPaymentType($paymentType);
+
+    function getPaymentType();
+
+    function setFinancialInstitution($financialInstitution);
+
+    function getFinancialInstitution();
+
+    function validateFinancialInstitution($financialInstitution);
+
+    function setLocale($locale);
+
+    function getLocale();
+
+    function getCurrencyCode();
+
     function setCreatedAt(\DateTime $createdAt);
 
     function getCreatedAt();
-
 }
