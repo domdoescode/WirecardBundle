@@ -159,7 +159,7 @@ class DomUdallWirecardExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $loader = new DomUdallWirecardExtension();
         $config = $this->getMinimumConfig();
-        unset($config['qpay']['customer_id']);
+        unset($config['qpay']['customerid']);
         $loader->load(array($config), new ContainerBuilder());
     }
 
@@ -254,11 +254,11 @@ class DomUdallWirecardExtensionTest extends \PHPUnit_Framework_TestCase
         $this->createMinimalConfiguration();
 
         $this->assertParameter('NOT_SO_SECRET', 'wirecard.qpay.secret');
-        $this->assertParameter('D200001', 'wirecard.qpay.customer_id');
+        $this->assertParameter('D200001', 'wirecard.qpay.customerid');
         $this->assertParameter('GBP', 'wirecard.qpay.currency');
         $this->assertParameter('en', 'wirecard.qpay.language');
-        $this->assertParameter(true, 'wirecard.qpay.duplicate_request_check');
-        $this->assertParameter(true, 'wirecard.qpay.auto_deposit');
+        $this->assertParameter(true, 'wirecard.qpay.duplicaterequestcheck');
+        $this->assertParameter(true, 'wirecard.qpay.autodeposit');
 
         $this->assertParameter('http://moneybags.com/payment/success.php', 'wirecard.qpay.url.success');
         $this->assertParameter('http://moneybags.com/payment/cancel.php', 'wirecard.qpay.url.cancel');
@@ -274,7 +274,7 @@ class DomUdallWirecardExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertHasDefinition('wirecard.payment_manager');
         $this->assertAlias('wirecard.payment_manager.default', 'wirecard.payment_manager');
     }
-    
+
     public function testLoadTemplatesWithMinimalConfig()
     {
         $this->createMinimalConfiguration();
@@ -297,11 +297,11 @@ class DomUdallWirecardExtensionTest extends \PHPUnit_Framework_TestCase
         $this->createFullConfiguration();
 
         $this->assertParameter('SUPER_SECRET_SIGNAL', 'wirecard.qpay.secret');
-        $this->assertParameter('D200002', 'wirecard.qpay.customer_id');
+        $this->assertParameter('D200002', 'wirecard.qpay.customerid');
         $this->assertParameter('EUR', 'wirecard.qpay.currency');
         $this->assertParameter('de', 'wirecard.qpay.language');
-        $this->assertParameter(false, 'wirecard.qpay.duplicate_request_check');
-        $this->assertParameter(false, 'wirecard.qpay.auto_deposit');
+        $this->assertParameter(false, 'wirecard.qpay.duplicaterequestcheck');
+        $this->assertParameter(false, 'wirecard.qpay.autodeposit');
 
         $this->assertParameter('http://moneybags.com/paywall/success.php', 'wirecard.qpay.url.success');
         $this->assertParameter('http://moneybags.com/paywall/cancel.php', 'wirecard.qpay.url.cancel');
@@ -317,7 +317,7 @@ class DomUdallWirecardExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertHasDefinition('wirecard.payment_manager');
         $this->assertAlias('wirecard.payment_manager.custom', 'wirecard.payment_manager');
     }
-    
+
     public function testLoadTemplatesWithFullConfig()
     {
         $this->createFullConfiguration();
@@ -339,7 +339,7 @@ payment:
   manager_class: DomUdall/WirecardBundle/Model/Manager.php
 qpay:
   secret: NOT_SO_SECRET
-  customer_id: D200001
+  customerid: D200001
   currency: GBP
   url:
     success: http://moneybags.com/payment/success.php
@@ -366,11 +366,11 @@ payment:
   manager_class: AcmeBank/WirecardBundle/Model/Manager.php
 qpay:
   secret: SUPER_SECRET_SIGNAL
-  customer_id: D200002
+  customerid: D200002
   currency: EUR
   language: de
-  duplicate_request_check: false
-  auto_deposit: false
+  duplicaterequestcheck: false
+  autodeposit: false
   url:
     success: http://moneybags.com/paywall/success.php
     cancel: http://moneybags.com/paywall/cancel.php
