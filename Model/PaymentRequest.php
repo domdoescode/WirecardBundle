@@ -222,7 +222,7 @@ abstract class PaymentRequest implements PaymentRequestInterface
         return $this->financialInstitution;
     }
 
-    protected function validateFinancialInstitution($financialInstitution)
+    public function validateFinancialInstitution($financialInstitution)
     {
         if (array_key_exists($this->paymentType, $this->validPaymentTypeFinancialInstitutionCombos)) {
             $validInstitutes = $this->validPaymentTypeFinancialInstitutionCombos[$this->paymentType];
