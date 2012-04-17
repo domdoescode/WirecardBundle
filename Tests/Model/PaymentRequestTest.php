@@ -242,7 +242,7 @@ class PaymentRequestTest extends \PHPUnit_Framework_TestCase
 
         return $invalidValues;
     }
-    
+
     public static function noPaymentTypeFinancialInstitutions()
     {
         $noValues = array();
