@@ -1,0 +1,71 @@
+DomUdall\WirecardBundle\Entity\PaymentResponse:
+  type: entity
+  table: wirecard_payment_request
+  fields:
+    id:
+      type: integer
+      id: true
+      generator:
+        strategy: AUTO
+    paymentState:
+      type: text
+    amount:
+      type: text
+      nullable: true
+    currency:
+      type: text
+      nullable: true
+    paymentType:
+      type: text
+      nullable: true
+    financialInstitution:
+      type: text
+      nullable: true
+    language:
+      type: text
+      nullable: true
+    orderNumber:
+      type: text
+      nullable: true
+    responseFingerprint:
+      type: text
+      nullable: true
+    responseFingerprintOrder:
+      type: text
+      nullable: true
+    anonymousPan:
+      type: text
+      nullable: true
+    authenticated:
+      type: text
+      nullable: true
+    message:
+      type: text
+      nullable: true
+    consumerMessage:
+      type: text
+      nullable: true
+    expiry:
+      type: text
+      nullable: true
+    cardholder:
+      type: text
+      nullable: true
+    maskedPan:
+      type: text
+      nullable: true
+    gatewayReferenceNumber:
+      type: text
+      nullable: true
+    gatewayContractNumber:
+      type: text
+      nullable: true
+    customField1:
+      type: text
+      nullable: true
+    customField2:
+      type: text
+      nullable: true
+    createdAt:
+      type: datetimetz
+  lifecycleCallbacks: {  }

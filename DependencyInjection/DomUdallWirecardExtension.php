@@ -43,7 +43,7 @@ class DomUdallWirecardExtension extends Extension
 
         $loader->load(sprintf('%s.yml', $config['db_driver']));
 
-        $container->setParameter('wirecard.payment.request.class', $config['payment']['request_class']);
+        // $container->setParameter('wirecard.payment.request.class', $config['payment']['request_class']);
         $container->setParameter('wirecard.payment.response.class', $config['payment']['response_class']);
         $container->setParameter('wirecard.payment.manager.class', $config['payment']['manager_class']);
 

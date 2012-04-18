@@ -37,45 +37,45 @@ interface PaymentResponseInterface
 
     function getFinancialInstitution();
 
-    function setLanguate($language);
+    function setLanguage($language);
 
     function getLanguage();
 
+    function setOrderNumber($orderNumber);
+
     function getOrderNumber();
 
-    function setOrderNumber();
+    function setResponseFingerprint($responseFingerprint);
 
-    function getResponseFingerprint($responseFingerprint);
+    function getResponseFingerprint();
 
-    function setResponseFingerprint();
+    function setResponseFingerprintOrder($responseFingerprintOrder);
 
-    function getResponseFingerprintOrder($responseFingerprintOrder);
+    function getResponseFingerprintOrder();
 
-    function setResponseFingerprintOrder();
+    function setAnonymousPan($anonymousPan);
 
-    function getAnonymousPan($anonymousPan);
+    function getAnonymousPan();
 
-    function setAnonymousPan();
+    function setAuthenticated($authenticated);
 
-    function getAuthenticated($authenticated);
+    function getAuthenticated();
 
-    function setAuthenticated();
+    function setMessage($message);
 
-    function getMessage($message);
+    function getMessage();
 
-    function setMessage();
+    function setExpiry($expiry);
 
-    function getExpiry($expiry);
+    function getExpiry();
 
-    function setExpiry();
+    function setCardholder($cardholder);
 
-    function getCardholder($cardholder);
+    function getCardholder();
 
-    function setCardholder();
+    function setMaskedPan($maskedPan);
 
-    function getMaskedPan($maskedPan);
-
-    function setMaskedPan();
+    function getMaskedPan();
 
     function setCreatedAt(\DateTime $createdAt);
 

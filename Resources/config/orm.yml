@@ -4,7 +4,7 @@ services:
         arguments:
             - @service_container
             - @doctrine.orm.entity_manager
-            - %wirecard.payment.request.class%
+            # - %wirecard.payment.request.class%
             - %wirecard.payment.response.class%
     wirecard.twig.extension:
         class: DomUdall\WirecardBundle\Twig\WirecardTwigExtension

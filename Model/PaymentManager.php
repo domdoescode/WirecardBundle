@@ -11,6 +11,8 @@
 
 namespace DomUdall\WirecardBundle\Model;
 
+use Doctrine\ORM\EntityManager;
+
 class PaymentManager
 {
     /**
@@ -18,30 +20,17 @@ class PaymentManager
      *
      * @param Container               $container
      * @param EntityManager           $em
-     * @param string                  $paymentRequestClass
      * @param string                  $paymentResponseClass
      */
-    public function __construct($container, EntityManager $em, $paymentRequestClass, $paymentResponseClass)
+    public function __construct($container, EntityManager $em, $paymentResponseClass)
     {
         $this->container = $container;
 
         $this->em = $em;
-        $this->paymentRequestRepository = $em->getRepository($paymentRequestClass);
         $this->paymentResponseRepository = $em->getRepository($paymentResponseClass);
-
-        $metadata = $em->getClassMetadata($paymentRequestClass);
-        $this->paymentRequestClass = $metadata->name;
 
         $metadata = $em->getClassMetadata($paymentResponseClass);
         $this->paymentResponseClass = $metadata->name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPaymentRequestClass()
-    {
-        return $this->paymentRequestClass;
     }
 
     /**
@@ -52,30 +41,72 @@ class PaymentManager
         return $this->paymentResponseClass;
     }
 
-    public function createPaymentRequest()
-    {
-        return $this->createEntity($this->getPaymentRequestClass);
-    }
-
     public function createPaymentResponse()
     {
-        return $this->createEntity($this->getPaymentResponseClass);
-    }
-
-    public function mapPaymentRequest($data)
-    {
-        $paymentRequest = $this->createPaymentRequest();
-
-        $paymentRequest;
-        exit;
+        return $this->createEntity($this->getPaymentResponseClass());
     }
 
     public function mapPaymentResponse($data)
     {
         $paymentResponse = $this->createPaymentResponse();
 
-        $paymentResponse;
-        exit;
+        foreach($data as $field => $value) {
+            if ($field == "secret") continue;
+
+            $function = "set" . ucwords($field);
+            $paymentResponse->$function($value);
+        }
+
+        return $paymentResponse;
+    }
+
+    public function savePaymentResponse($data)
+    {
+        if (!isset($data["orderNumber"]) || !$paymentResponse = $this->paymentResponseRepository->findOneBy(array("orderNumber" => $data["orderNumber"]))) {
+            $paymentResponse = $this->mapPaymentResponse($data);
+            $this->updateEntity($paymentResponse);
+        }
+
+        return $paymentResponse;
+    }
+
+    public function findUserPaymentResponses($user = null)
+    {
+        if (!$user) {
+            $user = $this->container->get('security.context')->getToken()->getUser();
+        }
+
+        $searchCriteria = array(
+            "customField1" => $user->getId(),
+            "paymentState" => "SUCCESS"
+        );
+
+        $paymentResponses = $this->paymentResponseRepository->findBy($searchCriteria);
+
+        $subscriptionManager = $this->container->get('synth_subscription.subscription_manager');
+        foreach ($paymentResponses as &$paymentResponse) {
+            $subscription = $subscriptionManager->findOneById($paymentResponse->getCustomField2());
+            $paymentResponse->subscription = $subscription;
+        }
+
+        return $paymentResponses;
+    }
+
+    /**
+     * Updates an entity.
+     *
+     * @param $entity
+     */
+    public function updateEntity($entity, $andFlush = true)
+    {
+        if ($entity->getId() != null) {
+            throw new \Exception("You cannot edit an existing payment!");
+        }
+        $this->em->persist($entity);
+
+        if ($andFlush) {
+            $this->em->flush();
+        }
     }
 
     public function createEntity($class)

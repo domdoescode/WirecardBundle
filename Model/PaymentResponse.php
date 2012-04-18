@@ -11,7 +11,7 @@
 
 namespace DomUdall\WirecardBundle\Model;
 
-class PaymentResponse implements PaymentRequestInterface
+abstract class PaymentResponse implements PaymentResponseInterface
 {
 
     protected $id;
@@ -40,11 +40,21 @@ class PaymentResponse implements PaymentRequestInterface
 
     protected $message;
 
+    protected $consumerMessage;
+
     protected $expiry;
 
     protected $cardholder;
 
     protected $maskedPan;
+
+    protected $gatewayReferenceNumber;
+
+    protected $gatewayContractNumber;
+
+    protected $customField1;
+
+    protected $customField2;
 
     protected $createdAt;
 
@@ -149,6 +159,14 @@ class PaymentResponse implements PaymentRequestInterface
         return $this->message;
     }
 
+    public function setConsumerMessage($consumerMessage) {
+        $this->consumerMessage = $consumerMessage;
+    }
+
+    public function getConsumerMessage() {
+        return $this->consumerMessage;
+    }
+
     public function setExpiry($expiry) {
         $this->expiry = $expiry;
     }
@@ -171,6 +189,38 @@ class PaymentResponse implements PaymentRequestInterface
 
     public function getMaskedPan() {
         return $this->maskedPan;
+    }
+
+    public function setGatewayReferenceNumber($gatewayReferenceNumber) {
+        $this->gatewayReferenceNumber = $gatewayReferenceNumber;
+    }
+
+    public function getGatewayReferenceNumber() {
+        return $this->gatewayReferenceNumber;
+    }
+
+    public function setGatewayContractNumber($gatewayContractNumber) {
+        $this->gatewayContractNumber = $gatewayContractNumber;
+    }
+
+    public function getGatewayContractNumber() {
+        return $this->gatewayContractNumber;
+    }
+
+    public function setCustomField1($customField1) {
+        $this->customField1 = $customField1;
+    }
+
+    public function getCustomField1() {
+        return $this->customField1;
+    }
+
+    public function setCustomField2($customField2) {
+        $this->customField2 = $customField2;
+    }
+
+    public function getCustomField2() {
+        return $this->customField2;
     }
 
     public function setCreatedAt(\DateTime $createdAt) {

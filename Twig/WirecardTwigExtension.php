@@ -25,12 +25,16 @@ class WirecardTwigExtension extends \Twig_Extension
         );
     }
 
-    public function wirecardSetting($parameter)
+    public function wirecardSetting($parameter, $returnBoolean = false)
     {
         $setting = null;
         try {
             $setting = $this->container->getParameter("wirecard.qpay." . $parameter);
         } catch(\InvalidArgumentException $e) {}
+
+        if ($returnBoolean) {
+            $setting = $setting ? "yes" : "no";
+        }
 
         return $setting;
     }
@@ -49,8 +53,17 @@ class WirecardTwigExtension extends \Twig_Extension
                 case "successurl":
                     $fingerprint .= $this->wirecardUrl("success");
                     break;
+                case "duplicaterequestcheck":
+                    $fingerprint .= $this->wirecardSetting("duplicaterequestcheck", true);
+                    break;
                 case "requestfingerprintorder":
-                    $fingerprint .= $this->wirecardUrl("fingerprint_order");
+                    $fingerprint .= $this->wirecardSetting("fingerprint_order");
+                    break;
+                case "orderdescription":
+                    $fingerprint .= $entity->getName();
+                    break;
+                case "displaytext":
+                    $fingerprint .= $entity->getName();
                     break;
                 default:
                     if ($setting = $this->wirecardSetting($orderKey)) {

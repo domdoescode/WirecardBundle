@@ -17,7 +17,7 @@ use DomUdall\WirecardBundle\Exception\InvalidPaymentTypeFinancialInstitutionComb
 
 use \NumberFormatter;
 
-class PaymentRequest implements PaymentRequestInterface
+abstract class PaymentRequest implements PaymentRequestInterface
 {
     /**
      * Payment types as defined by QPAY
