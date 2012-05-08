@@ -92,6 +92,23 @@ class PaymentManager
         return $paymentResponses;
     }
 
+    public function findAllUserPaymentResponses()
+    {
+        $searchCriteria = array(
+            "paymentState" => "SUCCESS"
+        );
+
+        $paymentResponses = $this->paymentResponseRepository->findBy($searchCriteria);
+
+        $subscriptionManager = $this->container->get('synth_subscription.subscription_manager');
+        foreach ($paymentResponses as &$paymentResponse) {
+            $subscription = $subscriptionManager->findOneById($paymentResponse->getCustomField2());
+            $paymentResponse->subscription = $subscription;
+        }
+
+        return $paymentResponses;
+    }
+
     /**
      * Updates an entity.
      *
@@ -115,5 +132,10 @@ class PaymentManager
         $entity->setCreatedAt(new \DateTime("now"));
 
         return $entity;
+    }
+
+    public function findOneById($id)
+    {
+        return $this->paymentResponseRepository->findOneById($id);
     }
 }
