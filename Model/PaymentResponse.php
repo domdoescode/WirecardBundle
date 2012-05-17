@@ -79,6 +79,11 @@ abstract class PaymentResponse implements PaymentResponseInterface
         return $this->amount;
     }
 
+    public function getAmountFormatted()
+    {
+        return number_format($this->amount, 2);
+    }
+
     public function setCurrency($currency) {
         $this->currency = $currency;
     }
