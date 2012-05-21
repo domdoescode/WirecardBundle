@@ -65,6 +65,23 @@ class WirecardTwigExtension extends \Twig_Extension
                 case "displaytext":
                     $fingerprint .= $entity->getName();
                     break;
+                case "amount":
+                    if ($promoCodeCode = $this->container->get('session')->get('promo-code')) {
+                        $promoCodeManager = $this->container->get('synth_subscription.promo_code_manager');
+                        $promoCodeSubscription = $promoCodeManager->findPromoCodeSubscriptionsForSubscriptionCode($promoCodeCode, $entity);
+                        if ($promoCodeSubscription) {
+                            $promoCodeSubscription = current($promoCodeSubscription);
+                            $discount = "0." . $promoCodeSubscription->getDiscount();
+
+                            $price = $entity->getCost();
+                            $fingerprint .= number_format($price * (1 - (float)$discount), 2);
+                        } else {
+                            $fingerprint .= $entity->getAmount();
+                        }
+                    } else {
+                        $fingerprint .= $entity->getAmount();
+                    }
+                    break;
                 default:
                     if ($setting = $this->wirecardSetting($orderKey)) {
                         $fingerprint .= $setting;
