@@ -70,7 +70,9 @@ class WirecardTwigExtension extends \Twig_Extension
                         $promoCodeManager = $this->container->get('synth_subscription.promo_code_manager');
                         $promoCodeSubscription = $promoCodeManager->findPromoCodeSubscriptionsForSubscriptionCode($promoCodeCode, $entity);
                         if ($promoCodeSubscription) {
-                            $promoCodeSubscription = current($promoCodeSubscription);
+                            if (is_array($promoCodeSubscription)) {
+                                $promoCodeSubscription = current($promoCodeSubscription);
+                            }
                             $discount = "0." . $promoCodeSubscription->getDiscount();
 
                             $price = $entity->getCost();
